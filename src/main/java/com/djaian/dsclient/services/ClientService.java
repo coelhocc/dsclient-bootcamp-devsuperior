@@ -30,12 +30,22 @@ public class ClientService {
 	public ClientDTO findById(Long id) {
 		Optional<Client> cliObj = repository.findById(id);
 		Client entity = cliObj.orElseThrow(() -> new ResourceNotFoundException("ID not found " + id));
+		
 		return new ClientDTO(entity);
 	}
 
 	@Transactional
 	public ClientDTO insert(ClientDTO dto) {
 		Client entity = new Client();
+		copyDtoToClient(dto, entity);
+		entity = repository.save(entity);
+		
+		return new ClientDTO(entity);
+	}
+
+	@Transactional
+	public ClientDTO update(Long id, ClientDTO dto) {
+		Client entity = repository.getOne(id);
 		copyDtoToClient(dto, entity);
 		entity = repository.save(entity);
 		
@@ -49,4 +59,5 @@ public class ClientService {
 		entity.setBirthDate(dto.getBirthDate());
 		entity.setChildren(dto.getChildren());
 	}
+
 }
